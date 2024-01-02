@@ -8,13 +8,60 @@ let square = [];
 // in the window
 let morph = [];
 
+  //     e.preventDefault();
+
 // This boolean variable will control if we are morphing to a circle or square
 let state = false;
 let morphingend = false;
 var displaymorph = false; 
 
+var pageCase = 0;
+
 var alphaE = 100;
 var overlay = document.getElementById("overlay");
+var skillwrapper = document.getElementById("overlay_skill");
+
+let flock;
+
+
+var about = document.getElementById("about_item");
+var skill = document.getElementById("skill_item");
+
+about.addEventListener("click",(e)=>{
+  pause = true;
+
+  overlay.classList.add('fade');
+  if(pageCase!=0){
+    skillwrapper.classList.remove('fade');
+    pageCase = 0;
+
+  }
+  circleMorph(0,0,canvaSize.x-gap,canvaSize.y-gap);
+  displaymorph = true;
+  // about.style.scale = 0.5;
+  
+})
+
+skill.addEventListener("click",(e)=>{
+
+
+
+
+  skillwrapper.classList.add('fade');
+
+  if(pageCase!=1){
+    overlay.classList.remove('fade');
+    pageCase = 0;
+
+  }
+  pause = true;
+  pageCase = 1;
+  circleMorph(0,0,canvaSize.x-gap,canvaSize.y-gap);
+  displaymorph = true;
+  // about.style.scale = 0.5;
+  
+})
+
 
 
 function circleMorph(cx, cy, l,w ){
@@ -105,7 +152,11 @@ function morphing(st){
     if (totalDistance < 0.1) {
       
       if(state == false){
-        overlay.classList.toggle('fade');
+        
+        if(pageCase == 0){
+          overlay.classList.add('fade');
+        }
+
         alphaE = 50;
 
         morphingend = true;
@@ -192,6 +243,7 @@ const canvaSize = {
 }
 // Setup function
 function setup() {
+
   canvaSize.x = window.innerWidth;
   canvaSize.y = window.innerHeight;
   canvas = createCanvas(canvaSize.x,canvaSize.y);
@@ -226,14 +278,29 @@ function mouseClicked(data){
     //pausestar = createVector(mouseX-(canvaSize.x/2),mouseY-(canvaSize.y/2));
 
   }else{
-   if( morphingend == true){
-    if(state == false){
-      overlay.classList.toggle('fade');
+    if( morphingend == true){
 
-      state = true;
-      circleMorph(pausevar.x,pausevar.y,windowWidth-gap,windowHeight-gap);
+      if(mouseX<gap/2 
+      ||mouseY<gap/2 || mouseY>(canvaSize.y-gap/2) ){
+ 
+        if(state == false){
+          if(pageCase ==0){
+            overlay.classList.remove('fade');
+          }else if(pageCase == 1){
+
+          }
+          state = true;
+          circleMorph(pausevar.x,pausevar.y,windowWidth-gap,windowHeight-gap);
+        }
+      }
+
+      // if(state == false){
+      //   overlay.classList.toggle('fade');
+
+      //   state = true;
+      //   circleMorph(pausevar.x,pausevar.y,windowWidth-gap,windowHeight-gap);
+      // }
     }
-   }
     //circleMorph(pausestar.x,pausestar.y,0,0);
     //console.log(pausestar.x);
 
@@ -261,6 +328,13 @@ function draw() {
 
   if(displaymorph == true){
     morphing(state);
+  }
+   //  run flocking
+  
+  if(morphingend == true){
+    if (pageCase == 1){
+    flock.run();
+    }
   }
 }
 
@@ -428,231 +502,228 @@ class Star {
   }
 }
 
+let img;
+
+function preload(){
+  flock = new Flock();
+  setupBoid();
+  img = loadImage('image/download.jpg');
+
+}
+// Add a new boid into the System
+function mouseDragged() {
+ // flock.addBoid(new Boid(mouseX-(canvaSize.x/2), mouseY-(canvaSize.y/2)));
+}
+
+// The Nature of Code
+// Daniel Shiffman
+// http://natureofcode.com
+
+// Flock object
+// Does very little, simply manages the array of all the boids
+
+
+function setupBoid(){
+  for (let i = 0; i < 4; i++) {
+    flock.addBoid(new Boid(0,0));
+  }
+}
+function Flock() {
+  // An array for all the boids
+  this.boids = []; // Initialize the array
+}
+
+Flock.prototype.run = function() {
+  for (let i = 0; i < this.boids.length; i++) {
+    this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
+  }
+}
+
+Flock.prototype.addBoid = function(b) {
+  this.boids.push(b);
+}
+
+// Boid class
+// Methods for Separation, Cohesion, Alignment added
+
+
+
+// function boidsetup(){
+
+// }
+
+
+function Boid(x, y) {
+  this.img;
+  this.acceleration = createVector(0, 0);
+  this.velocity = createVector(random(-1, 1), random(-1, 1));
+  this.position = createVector(x, y);
+  this.r = 42.0;
+  this.rmin = 42;
+  this.rmax = 50;
+  this.maxspeed = 3;    // Maximum speed
+  this.maxforce = 0.05; // Maximum steering force
+
+  // this.img = loadImage('image/download.jpg');
+}
+
+Boid.prototype.run = function(boids) {
+
+  let dis = dist(this.position.x,this.position.y,mouseX-(canvaSize.x/2),mouseY-(canvaSize.y/2));
+    
+  if( dis< this.r){
+
+    this.r=this.rmax;
+  } else{
+    this.r=this.rmin;
+  }
+
+
+
+ 
+  this.flock(boids);
+  this.update();
+  this.borders();
+  this.render();
+}
+
+Boid.prototype.applyForce = function(force) {
+  // We could add mass here if we want A = F / M
+  if(force.mag()>0)
+{
+  this.acceleration.add(force);
+}
+}
+
+// We accumulate a new acceleration each time based on three rules
+Boid.prototype.flock = function(boids) {
+  let sep = this.separate(boids);   // Separation
+  // let ali = this.align(boids);      // Alignment
+  let coh = this.cohesion(boids);   // Cohesion
+  // Arbitrarily weight these forces
+  sep.mult(1.5);
+  // ali.mult(1.0);
+  coh.mult(1.0);
+  // Add the force vectors to acceleration
+  this.applyForce(sep);
+  //this.applyForce(ali);
+  this.applyForce(coh);
+}
+
+// Method to update location
+Boid.prototype.update = function() {
+  // Update velocity
+  this.velocity.add(this.acceleration);
+  // Limit speed
+  this.velocity.limit(this.maxspeed);
+  this.position.add(this.velocity);
+  // Reset accelertion to 0 each cycle
+  this.acceleration.mult(0);
+}
+
+// A method that calculates and applies a steering force towards a target
+// STEER = DESIRED MINUS VELOCITY
+Boid.prototype.seek = function(target) {
+  let desired = p5.Vector.sub(target,this.position);  // A vector pointing from the location to the target
+  // Normalize desired and scale to maximum speed
+  desired.normalize();
+  desired.mult(this.maxspeed);
+  // Steering = Desired minus Velocity
+  let steer = p5.Vector.sub(desired,this.velocity);
+  steer.limit(this.maxforce);  // Limit to maximum steering force
+  return steer;
+}
+
+Boid.prototype.render = function() {
+  // Draw a triangle rotated in the direction of velocity
+  let theta = this.velocity.heading() + radians(90);
+  fill(127);
+  stroke(200);
+  push();
+  //translate(this.position.x, this.position.y);
+  ellipse(this.position.x, this.position.y, this.r, this.r);
+
+
+
+
+  // rotate(theta);
+  // beginShape();
+  // vertex(0, -this.r * 2);
+  // vertex(-this.r, this.r * 2);
+  // vertex(this.r, this.r * 2);
+  // endShape(CLOSE);
+
+    // tint(255,255,255,112);
+    // image(img,this.position.x,this.position.y);
+
+  pop();
+}
+
+// Wraparound
+Boid.prototype.borders = function() {
+  if (this.position.x < -this.r-(canvaSize.x/2))  this.position.x = width -(canvaSize.x/2)+ this.r;
+  if (this.position.y < -this.r-(canvaSize.y/2))  this.position.y = height-(canvaSize.y/2) + this.r;
+  if (this.position.x > width + this.r-(canvaSize.x/2)) this.position.x = -this.r-(canvaSize.x/2);
+  if (this.position.y > height + this.r-(canvaSize.y/2)) this.position.y = -this.r-(canvaSize.y/2);
+}
+
+// Separation
+// Method checks for nearby boids and steers away
+Boid.prototype.separate = function(boids) {
+  let desiredseparation = this.r + 50.0;
+  let steer = createVector(0, 0);
+  let count = 0;
+  // For every boid in the system, check if it's too close
+  for (let i = 0; i < boids.length; i++) {
+    let d = p5.Vector.dist(this.position,boids[i].position);
+    // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+    if ((d > 0) && (d < desiredseparation)) {
+      // Calculate vector pointing away from neighbor
+      let diff = p5.Vector.sub(this.position, boids[i].position);
+      diff.normalize();
+      diff.div(d);        // Weight by distance
+      steer.add(diff);
+      count++;            // Keep track of how many
+    }
+  }
+  // Average -- divide by how many
+  if (count > 0) {
+    steer.div(count);
+  }
+
+  // As long as the vector is greater than 0
+  if (steer.mag() > 0) {
+    // Implement Reynolds: Steering = Desired - Velocity
+    steer.normalize();
+    steer.mult(this.maxspeed);
+    steer.sub(this.velocity);
+    steer.limit(this.maxforce);
+  }
+  return steer;
+}
+
+// Cohesion
+// For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
+Boid.prototype.cohesion = function(boids) {
+  let neighbordist = 50;
+  let sum = createVector(0, 0);   // Start with empty vector to accumulate all locations
+  let count = 0;
+  for (let i = 0; i < boids.length; i++) {
+    let d = p5.Vector.dist(this.position,boids[i].position);
+    if ((d > 0) && (d < neighbordist)) {
+      sum.add(boids[i].position); // Add location
+      count++;
+    }
+  }
+  if (count > 0) {
+    sum.div(count);
+    return this.seek(sum);  // Steer towards the location
+  } else {
+    return createVector(0, 0);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////////////// FLOCKING
 
-// let flock;
 
-// function setup() {
-//   createCanvas(640, 360);
-//   createP("Drag the mouse to generate new boids.");
 
-//   flock = new Flock();
-//   // Add an initial set of boids into the system
-//   for (let i = 0; i < 0; i++) {
-//     let b = new Boid(width / 2,height / 2);
-//     flock.addBoid(b);
-//   }
-// }
-
-// function draw() {
-//   background(51);
-//   flock.run();
-// }
-
-// // Add a new boid into the System
-// function mouseDragged() {
-//   flock.addBoid(new Boid(mouseX, mouseY));
-// }
-
-// // The Nature of Code
-// // Daniel Shiffman
-// // http://natureofcode.com
-
-// // Flock object
-// // Does very little, simply manages the array of all the boids
-
-// function Flock() {
-//   // An array for all the boids
-//   this.boids = []; // Initialize the array
-// }
-
-// Flock.prototype.run = function() {
-//   for (let i = 0; i < this.boids.length; i++) {
-//     this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
-//   }
-// }
-
-// Flock.prototype.addBoid = function(b) {
-//   this.boids.push(b);
-// }
-
-// // The Nature of Code
-// // Daniel Shiffman
-// // http://natureofcode.com
-
-// // Boid class
-// // Methods for Separation, Cohesion, Alignment added
-
-// function Boid(x, y) {
-//   this.acceleration = createVector(0, 0);
-//   this.velocity = createVector(random(-1, 1), random(-1, 1));
-//   this.position = createVector(x, y);
-//   this.r = 22.0;
-//   this.maxspeed = 3;    // Maximum speed
-//   this.maxforce = 0.05; // Maximum steering force
-// }
-
-// Boid.prototype.run = function(boids) {
-//   this.flock(boids);
-//   this.update();
-//   this.borders();
-//   this.render();
-// }
-
-// Boid.prototype.applyForce = function(force) {
-//   // We could add mass here if we want A = F / M
-//   if(force.mag()>0)
-// {
-//   this.acceleration.add(force);
-// }else{
-//   this.velocity = createVector(0,0);
-// }
-// }
-
-// // We accumulate a new acceleration each time based on three rules
-// Boid.prototype.flock = function(boids) {
-//   let sep = this.separate(boids);   // Separation
-//   let ali = this.align(boids);      // Alignment
-//   let coh = this.cohesion(boids);   // Cohesion
-//   // Arbitrarily weight these forces
-//   sep.mult(1.5);
-//   ali.mult(1.0);
-//   coh.mult(1.0);
-//   // Add the force vectors to acceleration
-//   this.applyForce(sep);
-//   //this.applyForce(ali);
-//   //this.applyForce(coh);
-// }
-
-// // Method to update location
-// Boid.prototype.update = function() {
-//   // Update velocity
-//   this.velocity.add(this.acceleration);
-//   // Limit speed
-//   this.velocity.limit(this.maxspeed);
-//   this.position.add(this.velocity);
-//   // Reset accelertion to 0 each cycle
-//   this.acceleration.mult(0);
-// }
-
-// // A method that calculates and applies a steering force towards a target
-// // STEER = DESIRED MINUS VELOCITY
-// Boid.prototype.seek = function(target) {
-//   let desired = p5.Vector.sub(target,this.position);  // A vector pointing from the location to the target
-//   // Normalize desired and scale to maximum speed
-//   desired.normalize();
-//   desired.mult(this.maxspeed);
-//   // Steering = Desired minus Velocity
-//   let steer = p5.Vector.sub(desired,this.velocity);
-//   steer.limit(this.maxforce);  // Limit to maximum steering force
-//   return steer;
-// }
-
-// Boid.prototype.render = function() {
-//   // Draw a triangle rotated in the direction of velocity
-//   let theta = this.velocity.heading() + radians(90);
-//   fill(127);
-//   stroke(200);
-//   push();
-//   //translate(this.position.x, this.position.y);
-//   ellipse(this.position.x, this.position.y, this.r, this.r);
-
-//   rotate(theta);
-//   // beginShape();
-//   // vertex(0, -this.r * 2);
-//   // vertex(-this.r, this.r * 2);
-//   // vertex(this.r, this.r * 2);
-//   // endShape(CLOSE);
-
-//   pop();
-// }
-
-// // Wraparound
-// Boid.prototype.borders = function() {
-//   if (this.position.x < -this.r)  this.position.x = width + this.r;
-//   if (this.position.y < -this.r)  this.position.y = height + this.r;
-//   if (this.position.x > width + this.r) this.position.x = -this.r;
-//   if (this.position.y > height + this.r) this.position.y = -this.r;
-// }
-
-// // Separation
-// // Method checks for nearby boids and steers away
-// Boid.prototype.separate = function(boids) {
-//   let desiredseparation = this.r + 25.0;
-//   let steer = createVector(0, 0);
-//   let count = 0;
-//   // For every boid in the system, check if it's too close
-//   for (let i = 0; i < boids.length; i++) {
-//     let d = p5.Vector.dist(this.position,boids[i].position);
-//     // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-//     if ((d > 0) && (d < desiredseparation)) {
-//       // Calculate vector pointing away from neighbor
-//       let diff = p5.Vector.sub(this.position, boids[i].position);
-//       diff.normalize();
-//       diff.div(d);        // Weight by distance
-//       steer.add(diff);
-//       count++;            // Keep track of how many
-//     }
-//   }
-//   // Average -- divide by how many
-//   if (count > 0) {
-//     steer.div(count);
-//   }
-
-//   // As long as the vector is greater than 0
-//   if (steer.mag() > 0) {
-//     // Implement Reynolds: Steering = Desired - Velocity
-//     steer.normalize();
-//     steer.mult(this.maxspeed);
-//     steer.sub(this.velocity);
-//     steer.limit(this.maxforce);
-//   }
-//   return steer;
-// }
-
-// // Alignment
-// // For every nearby boid in the system, calculate the average velocity
-// Boid.prototype.align = function(boids) {
-//   let neighbordist = 50;
-//   let sum = createVector(0,0);
-//   let count = 0;
-//   for (let i = 0; i < boids.length; i++) {
-//     let d = p5.Vector.dist(this.position,boids[i].position);
-//     if ((d > 0) && (d < neighbordist)) {
-//       sum.add(boids[i].velocity);
-//       count++;
-//     }
-//   }
-//   if (count > 0) {
-//     sum.div(count);
-//     sum.normalize();
-//     sum.mult(this.maxspeed);
-//     let steer = p5.Vector.sub(sum, this.velocity);
-//     steer.limit(this.maxforce);
-//     return steer;
-//   } else {
-//     return createVector(0, 0);
-//   }
-// }
-
-// // Cohesion
-// // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-// Boid.prototype.cohesion = function(boids) {
-//   let neighbordist = 50;
-//   let sum = createVector(0, 0);   // Start with empty vector to accumulate all locations
-//   let count = 0;
-//   for (let i = 0; i < boids.length; i++) {
-//     let d = p5.Vector.dist(this.position,boids[i].position);
-//     if ((d > 0) && (d < neighbordist)) {
-//       sum.add(boids[i].position); // Add location
-//       count++;
-//     }
-//   }
-//   if (count > 0) {
-//     sum.div(count);
-//     return this.seek(sum);  // Steer towards the location
-//   } else {
-//     return createVector(0, 0);
-//   }
-// }
