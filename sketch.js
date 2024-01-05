@@ -30,7 +30,11 @@ var skill = document.getElementById("skill_item");
 about.addEventListener("click",(e)=>{
   pause = true;
 
-  overlay.classList.add('fade');
+
+    if(morphingend ==true){
+      overlay.classList.add('fade');
+    }
+
   if(pageCase!=0){
     skillwrapper.classList.remove('fade');
     pageCase = 0;
@@ -44,12 +48,12 @@ about.addEventListener("click",(e)=>{
 
 skill.addEventListener("click",(e)=>{
 
-
-
-
-  skillwrapper.classList.add('fade');
+  if(morphingend ==true){
+    skillwrapper.classList.add('fade');
+  }
 
   if(pageCase!=1){
+    
     overlay.classList.remove('fade');
     pageCase = 0;
 
@@ -149,12 +153,15 @@ function morphing(st){
     }
 
     // If all the vertices are close, switch shape
-    if (totalDistance < 0.1) {
+    if (totalDistance < 0.3) {
       
       if(state == false){
         
-        if(pageCase == 0){
+        if(pageCase==0){
           overlay.classList.add('fade');
+        }
+        else if (pageCase ==1 ){
+          skillwrapper.classList.add('fade');
         }
 
         alphaE = 50;
@@ -189,7 +196,7 @@ function morphing(st){
         totalDistance += p5.Vector.dist(v1, v2);
         
       }
-      if (totalDistance < 0.2) {      
+      if (totalDistance < 0.3) {      
           alphaE = 100;
           // intro.classList.add("fadin");
 
@@ -287,7 +294,7 @@ function mouseClicked(data){
           if(pageCase ==0){
             overlay.classList.remove('fade');
           }else if(pageCase == 1){
-
+            skillwrapper.classList.remove('fade');
           }
           state = true;
           circleMorph(pausevar.x,pausevar.y,windowWidth-gap,windowHeight-gap);
@@ -331,11 +338,11 @@ function draw() {
   }
    //  run flocking
   
-  if(morphingend == true){
-    if (pageCase == 1){
-    flock.run();
-    }
-  }
+  // if(morphingend == true){
+  //   if (pageCase == 1){
+  //     flock.run();
+  //   }
+  // }
 }
 
 //function mousePressed(){
