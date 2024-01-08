@@ -20,12 +20,15 @@ var pageCase = 0;
 var alphaE = 100;
 var overlay = document.getElementById("overlay");
 var skillwrapper = document.getElementById("overlay_skill");
+var projectwrapper = document.getElementById("overlay_project");
 
 let flock;
 
 
 var about = document.getElementById("about_item");
 var skill = document.getElementById("skill_item");
+var project = document.getElementById("project_item");
+
 
 about.addEventListener("click",(e)=>{
   pause = true;
@@ -37,6 +40,7 @@ about.addEventListener("click",(e)=>{
 
   if(pageCase!=0){
     skillwrapper.classList.remove('fade');
+    projectwrapper.classList.remove('fade');
     pageCase = 0;
 
   }
@@ -53,7 +57,8 @@ skill.addEventListener("click",(e)=>{
   }
 
   if(pageCase!=1){
-    
+
+    projectwrapper.classList.remove('fade');
     overlay.classList.remove('fade');
     pageCase = 0;
 
@@ -66,6 +71,28 @@ skill.addEventListener("click",(e)=>{
   
 })
 
+
+project.addEventListener("click",(e)=>{
+
+  if(morphingend ==true){
+    projectwrapper.classList.add('fade');
+
+  }
+
+  if(pageCase!=2){
+
+    skillwrapper.classList.remove('fade');
+    overlay.classList.remove('fade');
+    pageCase = 0;
+
+  }
+  pause = true;
+  pageCase = 2;
+  circleMorph(0,0,canvaSize.x-gap,canvaSize.y-gap);
+  displaymorph = true;
+  // about.style.scale = 0.5;
+  
+})
 
 
 function circleMorph(cx, cy, l,w ){
@@ -163,7 +190,9 @@ function morphing(st){
         else if (pageCase ==1 ){
           skillwrapper.classList.add('fade');
         }
-
+        else if (pageCase ==2 ){
+          projectwrapper.classList.add('fade');
+        }
         alphaE = 50;
 
         morphingend = true;
@@ -295,7 +324,11 @@ function mouseClicked(data){
             overlay.classList.remove('fade');
           }else if(pageCase == 1){
             skillwrapper.classList.remove('fade');
+          }else if(pageCase == 2){
+            projectwrapper.classList.remove('fade');
           }
+
+
           state = true;
           circleMorph(pausevar.x,pausevar.y,windowWidth-gap,windowHeight-gap);
         }
@@ -514,7 +547,7 @@ let img;
 function preload(){
   flock = new Flock();
   setupBoid();
-  img = loadImage('image/download.jpg');
+  // img = loadImage('image/download.jpg');
 
 }
 // Add a new boid into the System

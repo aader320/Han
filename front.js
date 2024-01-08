@@ -1,11 +1,12 @@
 const but = document.querySelector(".buttonmod");
 const poplist = document.querySelector(".poplist");
-// but.addEventListener("click",(e)=>{
-//     e.preventDefault();
-//     but.classList.add("animate");
 
+var gameDisplay = document.getElementById("Game_Display");
+var gamelist = document.getElementById("p_game_li");
 
-// })
+var frontDisplay = document.getElementById("Frontend_Display");
+var frontlist = document.getElementById("p_frontend_li");
+// var skill = document.getElementById("skill_item");
 
 // but.addEventListener("animationend", (e) => {
 //     e.preventDefault();
@@ -37,3 +38,16 @@ window.addEventListener('mousemove', (event) => {
     }
 });
 
+
+gamelist.addEventListener('click',(e)=>{
+   
+    frontDisplay.classList.add("project_Disabled");
+    gameDisplay.classList.remove("project_Disabled");
+});
+
+
+frontlist.addEventListener('click',(e)=>{
+   
+    gameDisplay.classList.add("project_Disabled");
+    frontDisplay.classList.remove("project_Disabled");
+});
