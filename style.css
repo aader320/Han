@@ -121,6 +121,12 @@ body {
     border: 2px solid purple ; */
 }
 
+
+.project_menu li:active{
+    background-color: rgb(255,255,255,1);
+    color: white; 
+}
+
 .project_menu ul {
     width: calc(100% );
     height: calc(100% );
@@ -186,6 +192,7 @@ body {
 
 .project_title{
     text-align: center;
+   
     padding-top: 20px;
 }
 
@@ -239,7 +246,7 @@ body {
 } */
 
 .project_title_desc{
-    text-align: center;
+    text-align: lef;
     padding-top: 40px;
     padding-left: 200px;
     padding-right: 200px;
@@ -251,7 +258,7 @@ body {
     margin-left: 15vw;
     margin-right: 15vw;
     padding-top: 10vh;
-    font-size: 60px;
+    font-size: 40px;
 }
 /* .skillsicon{
     margin-left: 15vw;
@@ -279,7 +286,7 @@ body {
 
 
 .skilltext{
-    font-size: 20px;
+    font-size: 18px;
     margin-left: 15vw;
     margin-top: 30px;
     margin-right: 10vw;
@@ -361,7 +368,9 @@ body {
 }
 
 .poplist{
-    transform: translateX(40%);
+    /* transform: translateX(40%);
+    transition: transform 0.7s ease-in-out ; */
+    transform: translateX(-24%);
     transition: transform 0.7s ease-in-out ;
 }
 .poplist.exit{
@@ -369,6 +378,20 @@ body {
     transition: transform 0.7s ease-in-out ;
 }
 
+
+.toolsicon{
+    /* position: absolute; */
+    color: white;
+    margin-top: 50px;
+    margin-left:200px ; 
+    /* padding: auto; */
+    /* border: 5px solid white ; */
+    /* text-align: center; */
+    font-size: 34px;
+    /* padding-bottom: 4px; */
+    font-size: 60px;
+
+}
 
 /* .poplist ul{
     color: white;

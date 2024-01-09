@@ -21,6 +21,7 @@ var alphaE = 100;
 var overlay = document.getElementById("overlay");
 var skillwrapper = document.getElementById("overlay_skill");
 var projectwrapper = document.getElementById("overlay_project");
+var poplisting = document.getElementById("poplisting");
 
 let flock;
 
@@ -183,6 +184,8 @@ function morphing(st){
     if (totalDistance < 0.3) {
       
       if(state == false){
+      poplisting.classList.add('fade');
+
         
         if(pageCase==0){
           overlay.classList.add('fade');
@@ -192,6 +195,9 @@ function morphing(st){
         }
         else if (pageCase ==2 ){
           projectwrapper.classList.add('fade');
+        }
+        else if (pageCase ==3 ){
+          mailwrapper.classList.add('fade');
         }
         alphaE = 50;
 
@@ -302,6 +308,7 @@ function setup() {
 function mouseClicked(data){
   
 
+
   if(displaymorph == false){
    // state = false;
     if( pause == false){
@@ -316,9 +323,11 @@ function mouseClicked(data){
   }else{
     if( morphingend == true){
 
+      
       if(mouseX<gap/2 
       ||mouseY<gap/2 || mouseY>(canvaSize.y-gap/2) ){
  
+        poplisting.classList.remove('fade');
         if(state == false){
           if(pageCase ==0){
             overlay.classList.remove('fade');
