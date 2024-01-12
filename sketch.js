@@ -22,6 +22,7 @@ var overlay = document.getElementById("overlay");
 var skillwrapper = document.getElementById("overlay_skill");
 var projectwrapper = document.getElementById("overlay_project");
 var poplisting = document.getElementById("poplisting");
+var mailwrapper = document.getElementById("Mail_Display")
 
 let flock;
 
@@ -29,7 +30,7 @@ let flock;
 var about = document.getElementById("about_item");
 var skill = document.getElementById("skill_item");
 var project = document.getElementById("project_item");
-
+var mail = document.getElementById("mail_item");
 
 about.addEventListener("click",(e)=>{
   pause = true;
@@ -42,6 +43,8 @@ about.addEventListener("click",(e)=>{
   if(pageCase!=0){
     skillwrapper.classList.remove('fade');
     projectwrapper.classList.remove('fade');
+    mailwrapper.classList.remove('fade');
+
     pageCase = 0;
 
   }
@@ -61,6 +64,7 @@ skill.addEventListener("click",(e)=>{
 
     projectwrapper.classList.remove('fade');
     overlay.classList.remove('fade');
+    mailwrapper.classList.remove('fade');
     pageCase = 0;
 
   }
@@ -81,7 +85,7 @@ project.addEventListener("click",(e)=>{
   }
 
   if(pageCase!=2){
-
+    mailwrapper.classList.remove('fade');
     skillwrapper.classList.remove('fade');
     overlay.classList.remove('fade');
     pageCase = 0;
@@ -94,6 +98,31 @@ project.addEventListener("click",(e)=>{
   // about.style.scale = 0.5;
   
 })
+
+mail.addEventListener("click",(e)=>{
+
+  if(morphingend ==true){
+    mailwrapper.classList.add('fade');
+
+  }
+
+  if(pageCase!=3){
+
+    projectwrapper.classList.remove('fade');
+    skillwrapper.classList.remove('fade');
+    overlay.classList.remove('fade');
+    pageCase = 3;
+
+  }
+
+  pause = true;
+  pageCase = 2;
+  circleMorph(0,0,canvaSize.x-gap,canvaSize.y-gap);
+  displaymorph = true;
+  // about.style.scale = 0.5;
+  
+})
+
 
 
 function circleMorph(cx, cy, l,w ){
@@ -335,6 +364,8 @@ function mouseClicked(data){
             skillwrapper.classList.remove('fade');
           }else if(pageCase == 2){
             projectwrapper.classList.remove('fade');
+          }else if(pageCase == 3){
+            mailwrapper.classList.remove('fade');
           }
 
 
