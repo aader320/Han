@@ -114,7 +114,7 @@ body {
 
 .project_menu{
     width: calc(25% - 120px);
-    height: calc(100vh - 120px);
+    height: 100%;   
 
     /* justify-content: space-between; */
     /* display: flex;
@@ -136,13 +136,14 @@ body {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+    /* border: 2px solid purple ; */
     /* align-items: center; */
 
   }
 
 .project_menu_item{
     list-style: none;
-    padding-top:15% ;
+    padding-top:50% ;
     /* align-self: center; */
     text-align:center;
     /* width: 100%;
@@ -192,6 +193,7 @@ body {
     justify-content: center;
     width: 100%;
     height: 100%;
+    
     
 }
 

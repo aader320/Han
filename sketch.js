@@ -85,9 +85,10 @@ project.addEventListener("click",(e)=>{
   }
 
   if(pageCase!=2){
-    mailwrapper.classList.remove('fade');
     skillwrapper.classList.remove('fade');
     overlay.classList.remove('fade');
+    mailwrapper.classList.remove('fade');
+
     pageCase = 0;
 
   }
@@ -111,12 +112,12 @@ mail.addEventListener("click",(e)=>{
     projectwrapper.classList.remove('fade');
     skillwrapper.classList.remove('fade');
     overlay.classList.remove('fade');
-    pageCase = 3;
+    pageCase = 0;
 
   }
 
   pause = true;
-  pageCase = 2;
+  pageCase = 3;
   circleMorph(0,0,canvaSize.x-gap,canvaSize.y-gap);
   displaymorph = true;
   // about.style.scale = 0.5;
@@ -428,10 +429,10 @@ function draw() {
 //}
 
 function windowResized() {
-  if(windowWidth > 1080){
+  if(windowWidth > 600){
     canvaSize.x = window.innerWidth;
   }
-  if( windowHeight>720){
+  if( windowHeight>600){
     canvaSize.y = window.innerHeight;
   }
   resizeCanvas(canvaSize.x, canvaSize.y);
