@@ -412,22 +412,22 @@ body {
 
 .vidwrapper{
 
-    width: 55vw;    
-
+    width: 65vw;    
+   
 }
 
 .slidingphoto {
-  width: 55vw;
-  height: calc(0.6 * 55vw);
+  width: 65vw;
+  height: calc(0.6 * 65vw);
   overflow: hidden;
   border-radius: 3px;
   /* box-shadow: 3px 20px 15px 0px rgba(0, 0, 0, 0.15); */
-  /* border: 2px solid red; */
 }
 
 .slideIMG img {
-  width: 55vw;
-  height: calc(0.6 * 55vw);
+    /* border: 2px solid red; */
+  width: 65vw;
+  height: calc(0.6 * 65vw);
   border-radius: 3px;
 
 }
@@ -451,6 +451,7 @@ body {
 }
 
 .slidingwrapper{
+     /* border: 2px solid red; */
     display: flex;
     margin: auto ;
     margin-top: 20px;

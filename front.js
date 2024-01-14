@@ -82,7 +82,7 @@ class PhotoSlider{
             this.currentSlide--;
         }
     
-          this.imgUL.style.transform = `translateX(-${this.currentSlide *0.55* window.innerWidth }px)`;
+          this.imgUL.style.transform = `translateX(-${this.currentSlide *0.65* window.innerWidth }px)`;
     }
     rightclick(){
         if (this.currentSlide === this.img.length - 1) {
@@ -90,7 +90,7 @@ class PhotoSlider{
         } else {
             this.currentSlide++;
         }
-        this.imgUL.style.transform = `translateX(-${this.currentSlide *0.55* window.innerWidth }px)`;
+        this.imgUL.style.transform = `translateX(-${this.currentSlide *0.65* window.innerWidth }px)`;
     }
 }
 
